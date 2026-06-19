@@ -5,7 +5,7 @@ import { LogOut, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { Avatar } from "@/components/ui/Avatar";
-import { auth } from "@/lib/firebase/client";
+import { auth } from "@/lib/firebase/auth";
 
 export function AppHeader() {
   const { user } = useAuth();

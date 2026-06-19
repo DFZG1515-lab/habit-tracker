@@ -9,7 +9,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase/client";
+import { db } from "@/lib/firebase/firestore";
 import type { Habit, HabitCategory, HabitFrequency } from "./types";
 
 export type HabitLog = {

@@ -15,7 +15,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { FormField } from "@/components/ui/FormField";
-import { auth } from "@/lib/firebase/client";
+import { auth } from "@/lib/firebase/auth";
 import { getFirebaseErrorMessage } from "@/lib/firebase/errors";
 
 type Tab = "login" | "registro";

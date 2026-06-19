@@ -1,6 +1,4 @@
 import { getApps, initializeApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,20 +9,12 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Firebase Auth solo se usa en el navegador (AuthProvider es un client component),
+// Solo se usa en el navegador (todo lo que lo consume es client component),
 // pero Next.js igual carga este módulo durante el prerender en el servidor, donde
 // las env vars públicas pueden no estar disponibles. Evitamos inicializar ahí.
-let app: FirebaseApp | undefined;
-let auth: Auth;
-let db: Firestore;
-
-if (typeof window !== "undefined") {
-  app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-} else {
-  auth = {} as Auth;
-  db = {} as Firestore;
-}
-
-export { auth, db };
+export const firebaseApp: FirebaseApp | undefined =
+  typeof window !== "undefined"
+    ? getApps().length
+      ? getApps()[0]
+      : initializeApp(firebaseConfig)
+    : undefined;
