@@ -8,16 +8,16 @@ export function Logo({ className = "h-8 w-8" }: { className?: string }) {
     >
       <defs>
         <linearGradient id="logo-base" x1="4" y1="2" x2="36" y2="38">
-          <stop offset="0%" stopColor="#818cf8" />
-          <stop offset="55%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#4338ca" />
+          <stop offset="0%" stopColor="#52525b" />
+          <stop offset="55%" stopColor="#27272a" />
+          <stop offset="100%" stopColor="#09090b" />
         </linearGradient>
         <linearGradient id="logo-sheen" x1="20" y1="2" x2="20" y2="22">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.35" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
         <filter id="logo-shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="1.5" stdDeviation="1.6" floodColor="#1e1b4b" floodOpacity="0.45" />
+          <feDropShadow dx="0" dy="1.5" stdDeviation="1.6" floodColor="#000000" floodOpacity="0.6" />
         </filter>
       </defs>
 
