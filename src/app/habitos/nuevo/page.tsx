@@ -79,7 +79,7 @@ function NuevoHabitoForm() {
 
   return (
     <main className="flex flex-1 justify-center px-4 py-8 pb-24 sm:pb-12">
-      <Card className="w-full max-w-lg p-8 shadow-xl">
+      <Card className="w-full max-w-lg p-8 shadow-xl animate-card-in">
         <h1 className="text-2xl font-semibold text-foreground">Crear un hábito</h1>
         <p className="mt-1 text-sm text-muted">
           Define qué quieres lograr y con qué frecuencia

@@ -22,7 +22,13 @@ type Tab = "login" | "registro";
 
 function AuthTabs({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
   return (
-    <div className="flex rounded-xl bg-surface-hover p-1">
+    <div className="relative flex rounded-xl bg-surface-hover p-1">
+      <div
+        className="absolute inset-y-1 w-[calc(50%-0.25rem)] rounded-lg bg-gradient-to-r from-accent-from to-accent-to transition-transform duration-300 ease-out"
+        style={{
+          transform: tab === "login" ? "translateX(0%)" : "translateX(calc(100% + 0.5rem))",
+        }}
+      />
       {(
         [
           { value: "login", label: "Iniciar sesión" },
@@ -33,10 +39,8 @@ function AuthTabs({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
           key={t.value}
           type="button"
           onClick={() => onChange(t.value)}
-          className={`flex-1 rounded-lg py-2 text-sm font-medium transition ${
-            tab === t.value
-              ? "bg-gradient-to-r from-accent-from to-accent-to text-black"
-              : "text-muted hover:text-foreground"
+          className={`relative z-10 flex-1 rounded-lg py-2 text-sm font-medium transition-colors duration-300 ${
+            tab === t.value ? "text-black" : "text-muted hover:text-foreground"
           }`}
         >
           {t.label}
@@ -194,21 +198,23 @@ function AuthCard() {
     <main className="relative flex flex-1 items-center justify-center px-4 py-12">
       <AuthBackground />
 
-      <Card className="relative w-full max-w-sm p-8 shadow-xl">
+      <Card className="relative w-full max-w-sm p-8 shadow-xl animate-card-in">
         <div className="flex items-center gap-2 text-accent-from">
           <Sparkles className="h-5 w-5" />
           <span className="text-xs font-medium uppercase tracking-wide">
             Habit Tracker
           </span>
         </div>
-        <h1 className="mt-3 text-2xl font-semibold text-foreground">
-          {tab === "login" ? "Bienvenido de vuelta" : "Crea tu cuenta"}
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          {tab === "login"
-            ? "Inicia sesión para seguir con tus hábitos"
-            : "Empieza a construir mejores hábitos hoy"}
-        </p>
+        <div key={tab} className="animate-fade-slide-in">
+          <h1 className="mt-3 text-2xl font-semibold text-foreground">
+            {tab === "login" ? "Bienvenido de vuelta" : "Crea tu cuenta"}
+          </h1>
+          <p className="mt-1 text-sm text-muted">
+            {tab === "login"
+              ? "Inicia sesión para seguir con tus hábitos"
+              : "Empieza a construir mejores hábitos hoy"}
+          </p>
+        </div>
 
         <div className="mt-6">
           <AuthTabs tab={tab} onChange={setTab} />
@@ -220,11 +226,13 @@ function AuthCard() {
           </div>
         )}
 
-        {tab === "login" ? (
-          <LoginFields onSubmitted={() => router.push("/")} />
-        ) : (
-          <RegistroFields onSubmitted={() => router.push("/")} />
-        )}
+        <div key={tab} className="animate-fade-slide-in">
+          {tab === "login" ? (
+            <LoginFields onSubmitted={() => router.push("/")} />
+          ) : (
+            <RegistroFields onSubmitted={() => router.push("/")} />
+          )}
+        </div>
       </Card>
     </main>
   );

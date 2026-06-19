@@ -39,7 +39,7 @@ function RecuperarPasswordForm() {
   return (
     <main className="relative flex flex-1 items-center justify-center px-4 py-12">
       <AuthBackground />
-      <Card className="relative w-full max-w-sm p-8 shadow-xl">
+      <Card className="relative w-full max-w-sm p-8 shadow-xl animate-card-in">
         <h1 className="text-2xl font-semibold text-foreground">
           Recuperar contraseña
         </h1>
