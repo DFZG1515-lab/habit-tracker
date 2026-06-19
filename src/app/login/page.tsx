@@ -5,11 +5,11 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { AuthBackground } from "@/components/AuthBackground";
+import { Logo } from "@/components/Logo";
 import { GuestRoute } from "@/components/ProtectedRoute";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
@@ -199,9 +199,9 @@ function AuthCard() {
       <AuthBackground />
 
       <Card className="relative w-full max-w-sm p-8 shadow-xl animate-card-in">
-        <div className="flex items-center gap-2 text-accent-from">
-          <Sparkles className="h-5 w-5" />
-          <span className="text-xs font-medium uppercase tracking-wide">
+        <div className="flex items-center gap-2">
+          <Logo className="h-6 w-6" />
+          <span className="text-xs font-medium uppercase tracking-wide text-accent-from">
             Habit Tracker
           </span>
         </div>

@@ -1,0 +1,25 @@
+export function Logo({ className = "h-8 w-8" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="logo-gradient" x1="0" y1="40" x2="40" y2="0">
+          <stop offset="0%" stopColor="var(--accent-to)" />
+          <stop offset="100%" stopColor="var(--accent-from)" />
+        </linearGradient>
+      </defs>
+
+      <rect width="40" height="40" rx="11" fill="url(#logo-gradient)" />
+
+      <rect x="9" y="22" width="5" height="9" rx="1.5" fill="black" fillOpacity="0.82" />
+      <rect x="17.5" y="16" width="5" height="15" rx="1.5" fill="black" fillOpacity="0.82" />
+      <rect x="26" y="9" width="5" height="22" rx="1.5" fill="black" fillOpacity="0.82" />
+
+      <circle cx="28.5" cy="6.5" r="3" fill="black" fillOpacity="0.82" />
+    </svg>
+  );
+}

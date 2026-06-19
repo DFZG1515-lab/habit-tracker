@@ -1,9 +1,10 @@
 "use client";
 
 import { signOut } from "firebase/auth";
-import { LogOut, Sparkles } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { Logo } from "@/components/Logo";
 import { Avatar } from "@/components/ui/Avatar";
 import { auth } from "@/lib/firebase/auth";
 
@@ -24,7 +25,7 @@ export function AppHeader() {
     <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2 text-foreground">
-          <Sparkles className="h-5 w-5 text-accent-from" />
+          <Logo className="h-7 w-7" />
           <span className="font-semibold">Habit Tracker</span>
         </div>
 
