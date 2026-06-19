@@ -33,14 +33,26 @@ export function Logo({ className = "h-8 w-8" }: { className?: string }) {
         strokeOpacity="0.15"
       />
 
-      <path
-        d="M13 20.5L18 25.5L27.5 14.5"
+      <circle
+        cx="20"
+        cy="20"
+        r="9"
         stroke="white"
-        strokeWidth="3.4"
+        strokeOpacity="0.18"
+        strokeWidth="4"
+      />
+      <circle
+        cx="20"
+        cy="20"
+        r="9"
+        stroke="white"
+        strokeWidth="4"
         strokeLinecap="round"
-        strokeLinejoin="round"
+        strokeDasharray="42.4 56.5"
+        transform="rotate(-90 20 20)"
         filter="url(#logo-shadow)"
       />
+      <circle cx="11" cy="20" r="1.7" fill="white" />
     </svg>
   );
 }
