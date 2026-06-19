@@ -18,6 +18,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Habit Tracker",
   description: "Crea, sigue y cumple tus hábitos",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Habit Tracker",
+  },
 };
 
 export const viewport: Viewport = {
