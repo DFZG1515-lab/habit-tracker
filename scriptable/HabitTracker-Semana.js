@@ -1,4 +1,4 @@
-// Habit Tracker - Widget "Semana en puntos"
+// Habit Tracker - Widget "Racha actual"
 // Configura tu proyecto abajo y corre el script una vez para guardar tu
 // email/contraseña en el Keychain de iOS (no se guardan en texto plano).
 
@@ -41,19 +41,21 @@ async function signIn(email, password) {
   return { idToken: res.idToken, uid: res.localId };
 }
 
-function dateKeyUTC(date) {
-  return date.toISOString().slice(0, 10);
+// Misma lógica que la app web: usar fecha LOCAL, no UTC, para que las rachas coincidan.
+function localDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
-function startOfWeekMonday(date) {
-  const d = new Date(date);
-  const day = d.getUTCDay(); // 0=domingo
-  const diff = day === 0 ? -6 : 1 - day;
-  d.setUTCDate(d.getUTCDate() + diff);
-  return d;
+function addDaysToKey(dateKey, days) {
+  const d = new Date(`${dateKey}T00:00:00`);
+  d.setDate(d.getDate() + days);
+  return localDateKey(d);
 }
 
-async function getWeekCompletedDates(uid, idToken, mondayKey) {
+async function getAllCompletedDates(uid, idToken) {
   const req = new Request(
     `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents:runQuery`
   );
@@ -71,7 +73,6 @@ async function getWeekCompletedDates(uid, idToken, mondayKey) {
           filters: [
             { fieldFilter: { field: { fieldPath: "userId" }, op: "EQUAL", value: { stringValue: uid } } },
             { fieldFilter: { field: { fieldPath: "completado" }, op: "EQUAL", value: { booleanValue: true } } },
-            { fieldFilter: { field: { fieldPath: "fecha" }, op: "GREATER_THAN_OR_EQUAL", value: { stringValue: mondayKey } } },
           ],
         },
       },
@@ -79,9 +80,6 @@ async function getWeekCompletedDates(uid, idToken, mondayKey) {
   });
 
   const res = await req.loadJSON();
-  console.log("uid: " + uid);
-  console.log("mondayKey: " + mondayKey);
-  console.log("respuesta Firestore: " + JSON.stringify(res));
 
   if (!Array.isArray(res)) {
     const alert = new Alert();
@@ -98,6 +96,29 @@ async function getWeekCompletedDates(uid, idToken, mondayKey) {
     if (fecha) dates.add(fecha);
   }
   return dates;
+}
+
+function calculateCurrentStreakDays(completedDates) {
+  const today = localDateKey(new Date());
+  let cursor = completedDates.has(today) ? today : addDaysToKey(today, -1);
+  let streak = 0;
+  while (completedDates.has(cursor)) {
+    streak += 1;
+    cursor = addDaysToKey(cursor, -1);
+  }
+  return streak;
+}
+
+function streakDisplay(days) {
+  if (days < 7) {
+    return { value: days, unit: days === 1 ? "día" : "días" };
+  }
+  if (days < 30) {
+    const weeks = Math.floor(days / 7);
+    return { value: weeks, unit: weeks === 1 ? "semana" : "semanas" };
+  }
+  const months = Math.floor(days / 30);
+  return { value: months, unit: months === 1 ? "mes" : "meses" };
 }
 
 function drawArc(ctx, center, radius, startAngle, endAngle, color, lineWidth) {
@@ -137,50 +158,18 @@ function createMiniLogo() {
   return ctx.getImage();
 }
 
-function createRingImage(completed, total) {
-  const size = 110;
-  const ctx = new DrawContext();
-  ctx.size = new Size(size, size);
-  ctx.opaque = false;
-  ctx.respectScreenScale = true;
-
-  const center = new Point(size / 2, size / 2);
-  const radius = size / 2 - 9;
-  const startAngle = -Math.PI / 2;
-  const fullCircleEnd = startAngle + Math.PI * 2;
-  const progressEnd = startAngle + Math.PI * 2 * (completed / total);
-
-  drawArc(ctx, center, radius, startAngle, fullCircleEnd, new Color("#3f3f46"), 9);
-  if (completed > 0) {
-    drawArc(ctx, center, radius, startAngle, progressEnd, Color.white(), 9);
-  }
-
-  ctx.setTextColor(Color.white());
-  ctx.setTextAlignedCenter();
-  ctx.setFont(Font.boldSystemFont(26));
-  ctx.drawTextInRect(
-    `${completed}/${total}`,
-    new Rect(0, size / 2 - 16, size, 32)
-  );
-
-  return ctx.getImage();
-}
-
 async function createWidget() {
   const { email, password } = await getCredentials();
   const { idToken, uid } = await signIn(email, password);
 
-  const today = new Date();
-  const monday = startOfWeekMonday(today);
-  const mondayKey = dateKeyUTC(monday);
-  const completedDates = await getWeekCompletedDates(uid, idToken, mondayKey);
+  const completedDates = await getAllCompletedDates(uid, idToken);
+  const streakDays = calculateCurrentStreakDays(completedDates);
+  const { value, unit } = streakDisplay(streakDays);
 
   const widget = new ListWidget();
   widget.backgroundColor = new Color("#0a0a0a");
   widget.url = APP_URL;
   widget.setPadding(18, 12, 12, 12);
-
-  const completedCount = [...completedDates].filter((d) => d >= mondayKey).length;
 
   const topRow = widget.addStack();
   topRow.layoutHorizontally();
@@ -206,19 +195,22 @@ async function createWidget() {
 
   widget.addSpacer();
 
-  const ringStack = widget.addStack();
-  ringStack.layoutHorizontally();
-  ringStack.addSpacer();
-  const ringImage = ringStack.addImage(createRingImage(completedCount, 7));
-  ringImage.imageSize = new Size(110, 110);
-  ringStack.addSpacer();
+  const label = widget.addText("Racha actual");
+  label.font = Font.semiboldSystemFont(11);
+  label.textColor = new Color("#9a9a9a");
+  label.centerAlignText();
 
-  widget.addSpacer(8);
+  widget.addSpacer(4);
 
-  const caption = widget.addText("ESTA SEMANA");
-  caption.font = Font.semiboldSystemFont(9);
-  caption.textColor = new Color("#9a9a9a");
-  caption.centerAlignText();
+  const numberText = widget.addText(String(value));
+  numberText.font = Font.boldSystemFont(44);
+  numberText.textColor = Color.white();
+  numberText.centerAlignText();
+
+  const unitText = widget.addText(unit);
+  unitText.font = Font.semiboldSystemFont(13);
+  unitText.textColor = Color.white();
+  unitText.centerAlignText();
 
   widget.addSpacer();
 
