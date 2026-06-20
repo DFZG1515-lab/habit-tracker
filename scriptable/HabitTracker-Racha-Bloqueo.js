@@ -121,7 +121,6 @@ async function createWidget() {
   const { value, unit } = streakDisplay(streakDays);
 
   const widget = new ListWidget();
-  widget.addAccessoryWidgetBackground();
   widget.url = APP_URL;
   widget.setPadding(2, 2, 2, 2);
 
